@@ -112,3 +112,7 @@ img {
 #photo-file {
   display: none;
 }
+
+#photo-preview {
+    margin: .8rem 0;
+}
