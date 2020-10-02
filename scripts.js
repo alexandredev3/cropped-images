@@ -1,5 +1,6 @@
 const photoFile = document.getElementById('photo-file');
-let image = document.getElementById('photo-preview');
+let imagePreview = document.getElementById('photo-preview');
+let image = new Image(); // uma nova imagem.
 
 // Selection And Preview-image;
 
@@ -112,5 +113,40 @@ Object.keys(events).forEach((eventName) => {
 
   // e a mesma coisa de fazer add.addEventListener('mouseover', function() {})
   // events[eventName] ele retorna uma função.
-  image.addEventListener(eventName, events[eventName]);
+  imagePreview.addEventListener(eventName, events[eventName]);
 });
+
+// Canvas (Cortar a imagem)
+let canvas = document.createElement('canvas');
+let ctx = canvas.getContext('2d');
+/**
+ * "ctx" e o contexto do convas.
+ * o canvas precisa de um contexto.
+ */
+
+image.onload = function () {
+  const { width, height } = image;
+
+  canvas.width = width;
+  canvas.height = height;
+
+  // limpando o contexto
+  ctx.clearRect(0, 0, width, height);
+  /**
+   * O primeiro "0" e o eixo "X";
+   * O segundo "0" e o eico "Y";
+   * O terceiro parametro e a largura que vc quer usar.
+   * O quarto parametro e a altura que vc quer usar.
+   */
+
+  // desenhando a imagem no contexto.
+  ctx.drawImage(image, 0, 0);
+  /**
+   * Como "primeiro" parametro, e a imagem que queremos que o canvas desenhe.
+   * Como "segundo" parametro, e a "largura" que começa de desenhar.
+   * Como "terceiro" parametro, e a "altura" que termina de desenhar.
+   */
+
+  imagePreview.src = canvas.toDataURL();
+  // toDataURL: ele vai pegar os dados dentro do canvas e transformar em uma url que colocar dentro do source da img.
+};
