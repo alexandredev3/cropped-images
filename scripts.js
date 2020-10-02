@@ -102,6 +102,8 @@ const events = {
      *  layerX: e o calculo horizontal de onde o mouse estar.
      * ele fica calculando onde o mouse esta no eixo X.
      */
+
+    cropButton.style.display = 'initial';
   },
 };
 
@@ -149,4 +151,61 @@ image.onload = function () {
 
   imagePreview.src = canvas.toDataURL();
   // toDataURL: ele vai pegar os dados dentro do canvas e transformar em uma url que colocar dentro do source da img.
+};
+
+// Cortar Imagem
+const cropButton = document.getElementById('crop-image');
+cropButton.onclick = () => {
+  const { width: imgWidth, height: imgHeight } = image;
+  const { width: previewWidth, height: previewHeight } = imagePreview;
+
+  // o sinal de "+" na frente, e para garantir que vai se retornado um numero.
+  const [widthFactor, heightFactor] = [
+    +(imgWidth / previewWidth),
+    +(imgHeight / previewHeight),
+  ];
+
+  // pegando o width do selection e substuindo o px por nada, para retornar apenas o numero.
+  const [selectionWidth, selectionHeight] = [
+    +selection.style.width.replace('px', ''),
+    +selection.style.height.replace('px', ''),
+  ];
+
+  const [croppedWidth, croppedHeight] = [
+    +(selectionWidth * widthFactor),
+    +(selectionHeight * heightFactor),
+  ];
+
+  // pegando o tamanho real da imagem, antes do corte, para passar no contexto do canvas.
+  const [actualX, actualY] = [
+    +(relativeStartX * widthFactor),
+    +(relativeStartY * heightFactor),
+  ];
+
+  // pegar do ctx a imagem cortada.
+  const croppedImage = ctx.getImageData(
+    actualX,
+    actualY,
+    croppedWidth,
+    croppedHeight
+  );
+
+  // limpando contexto do canvas
+  // estou matendo o width e o height da imagem
+  ctx.clearRect(0, 0, ctx.width, ctx.height);
+
+  // ajustando as proporciões
+  image.width = canvas.width = croppedWidth;
+  image.height = canvas.height = croppedHeight;
+
+  // adicionando a imagem cortada ao contexto do canvas.
+  ctx.putImageData(croppedImage, 0, 0);
+
+  // escondendo a ferramenta de seleção.
+  selection.style.display = 'none';
+
+  // atualizando foto no preview
+  imagePreview.src = canvas.toDataURL();
+
+  resetCrop.style.display = 'initial';
 };

@@ -127,3 +127,7 @@ display: none;
   width: 200px;
   height: 200px; */
 }
+
+#crop-image, #reset-crop, #download {
+  display: none;
+}
