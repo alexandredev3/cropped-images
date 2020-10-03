@@ -67,33 +67,35 @@ footer {
 }
 
 footer::after {
-  content: "Feito com ♥️ por Mayk Brito";
+  content: "Feito com ♥️ por Alexandre Costa";
   opacity: 0.6;
   font-size: 0.8rem;
 }
 
 button {
-display: block;
+  display: block;
 
-width: 100%;
+  width: 100%;
 
-padding: .8rem 1.6rem;
+  padding: .8rem 1.6rem;
 
-overflow: hidden;
+  overflow: hidden;
 
-position: relative;
+  position: relative;
 
-font-size: 1.2rem;
-font-weight: normal;
+  font-size: 1.2rem;
+  font-weight: normal;
 
-border: none;
-border-radius: 0.4rem;
+  border: none;
+  border-radius: 0.4rem;
 
-background: var(--orange);
+  background: var(--orange);
 
-color: var(--bg);
+  color: var(--bg);
 
-cursor: pointer;
+  cursor: pointer;
+
+  transition: all .2s;
 }
 
 button:hover {
@@ -128,6 +130,16 @@ display: none;
   height: 200px; */
 }
 
-#crop-image, #reset-crop, #download {
+#crop-image, #download {
+ display: none;
+}
+
+#message {
   display: none;
+
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 1rem;
+  color: var(--orange);
 }

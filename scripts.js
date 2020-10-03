@@ -1,6 +1,8 @@
 const photoFile = document.getElementById('photo-file');
 let imagePreview = document.getElementById('photo-preview');
-let image = new Image(); // uma nova imagem.
+let image;
+let photoName;
+let previousImage;
 
 // Selection And Preview-image;
 
@@ -18,20 +20,29 @@ window.addEventListener('DOMContentLoaded', () => {
      * files.item(0): como eu so tenho um arquivo, estou pegando ele na posição "0".
      */
 
+    photoName = file.name;
+    // file.name vai retorna o nome do arquivo.
+
     // ler um arquivo
     let reader = new FileReader(); // FileReader: leitor de arquivos do navegador.
     reader.readAsDataURL(file); // ele vai ler os arquivos.(do tipo blob)
     reader.onload = function (event) {
       // quando ele tiver feito o carregamendo da imagem, ele vai executar essa função.
+
+      image = new Image(); // criando uma nova imagem.
       image.src = event.target.result;
       /* estou pegando o resultado do carregamento da imagem que e a image, 
       e colocando no source da imagem la no HTML. */
+      image.onload = onLoadImage; // quando ele carregar a imagem ele vai chamar essa função.
+
+      message.style.display = 'flex';
     };
   }); // sempre que ouver uma alteração no photoFile vai executar essa função.
 });
 
 // Selection Tool;
 const selection = document.getElementById('selection-tool');
+const message = document.getElementById('message');
 
 let startX,
   startY,
@@ -53,8 +64,11 @@ const events = {
   mouseover() {
     this.style.cursor = 'crosshair';
     // o this da pegando a variavel image, e o target.
+    message.innerHTML = 'Selecione a parte da imagem que deseja cortar.';
   },
   mousedown() {
+    message.innerHTML = 'Mova seu mouse para selecionar.';
+
     const { clientX, clientY, offsetX, offsetY } = event;
     // console.table({
     //   Client: [clientX, clientY],
@@ -90,6 +104,8 @@ const events = {
       // quando coloco Parênteses quer dizer que eu vou colocar uma expressão Matematica.
       selection.style.width = endX - startX + 'px';
       selection.style.height = endY - startY + 'px';
+
+      message.innerHTML = 'Solte o clique para terminar a seleção.';
     }
   },
   mouseup() {
@@ -104,6 +120,8 @@ const events = {
      */
 
     cropButton.style.display = 'initial';
+    message.style.display = 'none';
+    message.innerHTML = '';
   },
 };
 
@@ -126,8 +144,10 @@ let ctx = canvas.getContext('2d');
  * o canvas precisa de um contexto.
  */
 
-image.onload = function () {
+function onLoadImage() {
   const { width, height } = image;
+
+  previousImage = image;
 
   canvas.width = width;
   canvas.height = height;
@@ -151,10 +171,11 @@ image.onload = function () {
 
   imagePreview.src = canvas.toDataURL();
   // toDataURL: ele vai pegar os dados dentro do canvas e transformar em uma url que colocar dentro do source da img.
-};
+}
 
 // Cortar Imagem
 const cropButton = document.getElementById('crop-image');
+
 cropButton.onclick = () => {
   const { width: imgWidth, height: imgHeight } = image;
   const { width: previewWidth, height: previewHeight } = imagePreview;
@@ -207,5 +228,16 @@ cropButton.onclick = () => {
   // atualizando foto no preview
   imagePreview.src = canvas.toDataURL();
 
-  resetCrop.style.display = 'initial';
+  downloadButton.style.display = 'initial';
+};
+
+// Download
+const downloadButton = document.getElementById('download');
+
+downloadButton.onclick = function () {
+  const a = document.createElement('a');
+  a.download = photoName + '-cropped.png';
+  // na parte de escolher o nome do arquivo, vai começar com o nome da imagem, e na frente -cropped.png
+  a.href = canvas.toDataURL(); // estou colocando a imagem que esta no canvas, no link de download.
+  a.click();
 };
